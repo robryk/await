@@ -44,3 +44,18 @@ func TestSimple(t *testing.T) {
 		t.Error("AwaitServer.wakeUp incorrectly returned true")
 	}
 }
+
+func TestCancel(t *testing.T) {
+	as := NewAwaitServer("")
+	a := as.New()
+
+	chanBlocked(t, a.Chan(), "a")
+
+	a.Cancel()
+
+	chanUnblocked(t, a.Chan(), "a")
+
+	if as.wakeUp(a.id) {
+		t.Error("AwaitServer.wakeUp returned true on a cancelled Await")
+	}
+}
